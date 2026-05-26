@@ -1,0 +1,23 @@
+{
+  "generatedAt": "2026-05-26T10:53:46.919Z",
+  "releases": {
+    "codex": {
+      "version": "0.133.0",
+      "publishedAt": "May 21, 2026, 6:48 PM",
+      "html": "<h4>New Features</h4><ul><li>Goals are now enabled by default, backed by dedicated storage, and track progress across active turns. (#23300, #23685, #23696, #23732)</li><li><code>codex remote-control</code> now runs like a foreground command, waits for readiness, reports machine status, and keeps explicit daemon-style <code>start</code>/<code>stop</code> commands. (#22878)</li><li>Permission profiles gained list APIs, inheritance, managed <code>requirements.toml</code> support, runtime refresh behavior, and stronger Windows sandbox integration. (#22928, #23412, #22270, #23433, #22931, #23715)</li><li>Plugin discovery is easier to inspect, with marketplace-aware list output, installed versions, visible marketplace roots, and remote collection support. (#23372, #23584, #23727, #23730)</li><li>Extensions can observe more lifecycle events, including subagent start/stop, tool execution, turn metadata, and async approval/turn processing. (#22782, #22873, #23309, #23688, #23690, #23692)</li></ul><h4>Bug Fixes</h4><ul><li>Fixed TUI startup choosing the wrong working directory when reusing a local app-server socket. (#23538)</li><li>Fixed plan-mode free-form answers so modified Enter keys, like Shift+Enter, no longer submit unexpectedly. (#23536)</li><li>Removed stale background terminal poll events after a process exits. (#23231)</li><li>Preserved raw code-mode exec output unless an explicit output token limit is requested. (#23564)</li><li>Made AGENTS instruction loading more reliable, including local global reads and warnings for invalid UTF-8 instead of silent drops. (#23343, #23232)</li><li>Fixed app-server startup/shutdown races, empty resume/fork paths, plugin upgrade failures, and realtime v1 websocket compatibility. (#23516, #23578, #23400, #23356, #23771)</li></ul><h4>Documentation</h4><ul><li>Added clearer plugin-creator guidance for updating and reinstalling local personal plugins. (#23542)</li><li>Expanded app-server/API docs and schema coverage around managed permission profile requirements. (#23433, #23555)</li></ul><h4>Chores</h4><ul><li>Added a canonical Codex package archive pipeline and moved installers, npm packages, DotSlash, and SDK runtimes toward that shared layout. (#23513, #23582, #23586, #23596, #23635, #23636, #23637, #23638, #23786)</li><li>Fixed Linux Python runtime wheel tags so glibc-based systems can install the runtime artifacts. (#21812)</li><li>Improved release and CI reliability with package-builder tests, prebuilt resource packaging, DotSlash zstd handling, platform-sharded Rust tests, and Codex Linux release runners. (#23760, #23759, #23752, #23358, #23761)</li></ul>",
+      "originalUrl": "https://github.com/openai/codex/releases/latest"
+    },
+    "claude": {
+      "version": "2.1.150",
+      "publishedAt": "May 23, 2026",
+      "html": "<ul><li>Internal infrastructure improvements (no user-facing changes)</li></ul>",
+      "originalUrl": "https://code.claude.com/docs/en/changelog"
+    },
+    "opencode": {
+      "version": "v1.15.10",
+      "publishedAt": "May 23, 2026, 3:04 AM",
+      "html": "<h4>Desktop</h4><h4>Bugfixes</h4><ul><li>Restored the legacy production desktop flows for opening projects and starting sessions.</li></ul>",
+      "originalUrl": "https://github.com/sst/opencode/releases/latest"
+    }
+  }
+}

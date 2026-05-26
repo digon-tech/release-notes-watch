@@ -373,7 +373,8 @@
       {
         id: "codex",
         name: "OpenAI Codex",
-        type: "githubRelease",
+        type: "snapshot",
+        snapshotKey: "codex",
         iconUrl: "https://developers.openai.com/favicon.png",
         iconFallback: "AI",
         apiUrl: "https://api.github.com/repos/openai/codex/releases/latest",
@@ -383,7 +384,8 @@
       {
         id: "claude",
         name: "Claude Code",
-        type: "claudeChangelog",
+        type: "snapshot",
+        snapshotKey: "claude",
         iconUrl: "https://code.claude.com/docs/_mintlify/favicons/claude-code/pLsy-mRpNksna2sx/_generated/favicon/favicon-32x32.png",
         iconFallback: "C",
         apiUrl: "https://r.jina.ai/http://r.jina.ai/http://https://code.claude.com/docs/en/changelog",
@@ -396,7 +398,8 @@
       {
         id: "opencode",
         name: "OpenCode",
-        type: "githubRelease",
+        type: "snapshot",
+        snapshotKey: "opencode",
         iconUrl: "https://opencode.ai/favicon-96x96-v3.png",
         iconFallback: "OC",
         apiUrl: "https://api.github.com/repos/sst/opencode/releases/latest",
@@ -408,6 +411,7 @@
     const cards = new Map();
     const statusText = document.querySelector("#statusText");
     const refreshButton = document.querySelector("#refreshButton");
+    let snapshotPromise = null;
     const formatter = new Intl.DateTimeFormat("en-US", {
       dateStyle: "medium",
       timeStyle: "short"
@@ -475,6 +479,14 @@
     async function fetchJson(url, fallbackUrls = []) {
       const text = await fetchText(url, fallbackUrls);
       return JSON.parse(text);
+    }
+
+    async function loadSnapshot() {
+      if (!snapshotPromise) {
+        snapshotPromise = fetchJson(`./releases.json?cache=${Date.now()}`, []);
+      }
+
+      return snapshotPromise;
     }
 
     function escapeHtml(value) {
@@ -618,6 +630,15 @@
     }
 
     async function loadSource(source) {
+      if (source.type === "snapshot") {
+        const snapshot = await loadSnapshot();
+        const release = snapshot.releases && snapshot.releases[source.snapshotKey];
+        if (!release) {
+          throw new Error("Snapshot entry is missing");
+        }
+        return release;
+      }
+
       if (source.type === "githubRelease") {
         const data = await fetchJson(source.apiUrl, source.fallbackUrls);
         return {
@@ -633,6 +654,7 @@
 
     async function refresh() {
       refreshButton.disabled = true;
+      snapshotPromise = null;
       statusText.textContent = "Refreshing...";
 
       const results = await Promise.allSettled(sources.map(async (source) => {
