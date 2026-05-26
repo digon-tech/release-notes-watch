@@ -483,7 +483,9 @@
 
     async function loadSnapshot() {
       if (!snapshotPromise) {
-        snapshotPromise = fetchJson(`./releases.json?cache=${Date.now()}`, []);
+        snapshotPromise = fetchJson(`./releases.json?cache=${Date.now()}`, [
+          `https://raw.githubusercontent.com/digon-tech/release-notes-watch/main/releases.json?cache=${Date.now()}`
+        ]);
       }
 
       return snapshotPromise;
