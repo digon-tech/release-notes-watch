@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Release Notes Watch</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f6f8;
+      --panel: #ffffff;
+      --text: #1b1f24;
+      --muted: #66707d;
+      --border: #d7dde5;
+      --accent: #0f766e;
+      --accent-dark: #0b5f59;
+      --warn: #a16207;
+      --error: #b42318;
+      --shadow: 0 18px 45px rgba(27, 31, 36, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+      overflow: hidden;
+    }
+
+    a {
+      color: var(--accent-dark);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 7px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.92rem;
+      font-weight: 700;
+      padding: 0.78rem 1rem;
+    }
+
+    button:hover {
+      background: var(--accent-dark);
+    }
+
+    button:disabled {
+      cursor: wait;
+      opacity: 0.68;
+    }
+
+    .shell {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      height: 100vh;
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 42px;
+    }
+
+    .topbar {
+      align-items: end;
+      display: flex;
+      flex: 0 0 auto;
+      gap: 18px;
+      justify-content: space-between;
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 3vw, 3rem);
+      letter-spacing: 0;
+      line-height: 1.08;
+      margin: 0 0 0.45rem;
+    }
+
+    .lead {
+      color: var(--muted);
+      margin: 0;
+      max-width: 760px;
+    }
+
+    .disclaimer {
+      align-items: center;
+      color: var(--muted);
+      display: flex;
+      flex: 0 0 auto;
+      flex-wrap: wrap;
+      font-size: 0.82rem;
+      gap: 6px 12px;
+      margin: 0;
+      max-width: 100%;
+    }
+
+    .disclaimer p {
+      margin: 0;
+    }
+
+    .grid {
+      align-items: stretch;
+      display: grid;
+      flex: 1 1 auto;
+      gap: 16px;
+      grid-auto-rows: minmax(0, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr);
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    .card-head {
+      border-bottom: 1px solid var(--border);
+      padding: 18px 18px 14px;
+    }
+
+    .product {
+      align-items: flex-start;
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .product-main {
+      align-items: center;
+      display: grid;
+      gap: 10px;
+      grid-template-columns: auto minmax(0, 1fr);
+      min-width: 0;
+    }
+
+    .tool-icon {
+      align-items: center;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--accent-dark);
+      display: inline-flex;
+      flex: 0 0 auto;
+      height: 38px;
+      justify-content: center;
+      width: 38px;
+    }
+
+    .tool-icon img {
+      display: block;
+      height: 25px;
+      object-fit: contain;
+      width: 25px;
+    }
+
+    .icon-fallback {
+      display: none;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .product h2 {
+      font-size: 1.18rem;
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    .badge {
+      background: #eef7f5;
+      border: 1px solid #cfe6e2;
+      border-radius: 999px;
+      color: var(--accent-dark);
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 0.22rem 0.55rem;
+      white-space: nowrap;
+    }
+
+    .product-actions {
+      align-items: flex-end;
+      display: grid;
+      gap: 4px;
+      justify-items: end;
+      min-width: max-content;
+    }
+
+    .origin {
+      font-size: 0.86rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .version {
+      font-size: 1.9rem;
+      font-weight: 800;
+      letter-spacing: 0;
+      line-height: 1.05;
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .date {
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin: 0.48rem 0 0;
+    }
+
+    .body {
+      min-height: 0;
+      overflow: hidden;
+      padding: 18px;
+    }
+
+    .release-html {
+      color: #2f3844;
+      font-size: 0.94rem;
+      height: 100%;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .release-html h3,
+    .release-html h4 {
+      color: var(--text);
+      font-size: 1rem;
+      line-height: 1.28;
+      margin: 1.1rem 0 0.35rem;
+    }
+
+    .release-html h3:first-child,
+    .release-html h4:first-child {
+      margin-top: 0;
+    }
+
+    .release-html p {
+      margin: 0 0 0.7rem;
+    }
+
+    .release-html ul {
+      margin: 0 0 0.85rem;
+      padding-left: 1.1rem;
+    }
+
+    .release-html li {
+      margin: 0.28rem 0;
+    }
+
+    .empty,
+    .error {
+      border-left: 3px solid var(--warn);
+      color: var(--muted);
+      padding-left: 0.8rem;
+    }
+
+    .error {
+      border-left-color: var(--error);
+      color: var(--error);
+    }
+
+    .source-note {
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-align: right;
+    }
+
+    @media (max-width: 680px) {
+      .shell {
+        height: auto;
+        min-height: 100vh;
+        width: min(100% - 22px, 1180px);
+        padding-top: 22px;
+      }
+
+      body {
+        height: auto;
+        overflow: auto;
+      }
+
+      .grid {
+        overflow: visible;
+      }
+
+      .card {
+        height: min(560px, calc(100vh - 180px));
+        min-height: 360px;
+      }
+
+      .topbar {
+        align-items: stretch;
+        display: grid;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .product {
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .source-note {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div>
+        <h1>Latest AI coding tool releases</h1>
+        <p class="lead">Most recent version and latest release notes for Codex, Claude Code, and OpenCode. Each card links back to the original source.</p>
+      </div>
+      <button id="refreshButton" type="button" aria-label="Refresh release notes">Refresh</button>
+    </header>
+
+    <section id="cards" class="grid" aria-label="Latest releases"></section>
+
+    <footer class="disclaimer">
+      <p id="statusText" aria-live="polite">Ready to refresh.</p>
+      <p>Unofficial release monitor. Product names and logos belong to their respective owners.</p>
+    </footer>
+  </main>
+
+  <template id="cardTemplate">
+    <article class="card">
+      <div class="card-head">
+        <div class="product">
+          <div class="product-main">
+            <span class="tool-icon" aria-hidden="true"></span>
+            <div>
+              <h2></h2>
+              <span class="badge">live</span>
+            </div>
+          </div>
+          <div class="product-actions">
+            <a class="origin" href="#" target="_blank" rel="noreferrer">Original</a>
+            <span class="source-note"></span>
+          </div>
+        </div>
+        <p class="version">...</p>
+        <p class="date">Loading...</p>
+      </div>
+      <div class="body">
+        <div class="release-html empty">Reading the original source.</div>
+      </div>
+    </article>
+  </template>
+
+  <script>
+    const sources = [
+      {
+        id: "codex",
+        name: "OpenAI Codex",
+        type: "githubRelease",
+        iconUrl: "https://developers.openai.com/favicon.png",
+        iconFallback: "AI",
+        apiUrl: "https://api.github.com/repos/openai/codex/releases/latest",
+        originalUrl: "https://github.com/openai/codex/releases/latest",
+        note: "openai/codex"
+      },
+      {
+        id: "claude",
+        name: "Claude Code",
+        type: "claudeChangelog",
+        iconUrl: "https://code.claude.com/docs/_mintlify/favicons/claude-code/pLsy-mRpNksna2sx/_generated/favicon/favicon-32x32.png",
+        iconFallback: "C",
+        apiUrl: "https://r.jina.ai/http://r.jina.ai/http://https://code.claude.com/docs/en/changelog",
+        fallbackUrls: [
+          "https://r.jina.ai/http://r.jina.ai/http://https://docs.anthropic.com/en/release-notes/claude-code"
+        ],
+        originalUrl: "https://code.claude.com/docs/en/changelog",
+        note: "code.claude.com"
+      },
+      {
+        id: "opencode",
+        name: "OpenCode",
+        type: "githubRelease",
+        iconUrl: "https://opencode.ai/favicon-96x96-v3.png",
+        iconFallback: "OC",
+        apiUrl: "https://api.github.com/repos/sst/opencode/releases/latest",
+        originalUrl: "https://github.com/sst/opencode/releases/latest",
+        note: "sst/opencode"
+      }
+    ];
+
+    const cards = new Map();
+    const statusText = document.querySelector("#statusText");
+    const refreshButton = document.querySelector("#refreshButton");
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      dateStyle: "medium",
+      timeStyle: "short"
+    });
+    const dateOnlyFormatter = new Intl.DateTimeFormat("en-US", {
+      dateStyle: "medium"
+    });
+
+    function initCards() {
+      const holder = document.querySelector("#cards");
+      const template = document.querySelector("#cardTemplate");
+
+      sources.forEach((source) => {
+        const node = template.content.firstElementChild.cloneNode(true);
+        node.dataset.source = source.id;
+        node.querySelector("h2").textContent = source.name;
+        node.querySelector(".tool-icon").innerHTML = `<img src="${source.iconUrl}" alt="" loading="lazy"><span class="icon-fallback">${source.iconFallback}</span>`;
+        node.querySelector(".tool-icon img").addEventListener("error", (event) => {
+          event.currentTarget.style.display = "none";
+          event.currentTarget.nextElementSibling.style.display = "inline";
+        });
+        node.querySelector(".origin").href = source.originalUrl;
+        node.querySelector(".source-note").textContent = source.note;
+        holder.appendChild(node);
+        cards.set(source.id, node);
+      });
+    }
+
+    async function fetchWithTimeout(url, options = {}, timeoutMs = 14000) {
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        return await fetch(url, { ...options, signal: controller.signal });
+      } finally {
+        window.clearTimeout(timeout);
+      }
+    }
+
+    async function fetchText(url, fallbackUrls = []) {
+      const attempts = [
+        url,
+        ...fallbackUrls,
+        `https://r.jina.ai/http://r.jina.ai/http://${url}`,
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
+      ];
+
+      let lastError;
+      for (const attempt of attempts) {
+        try {
+          const response = await fetchWithTimeout(attempt, {
+            headers: { "Accept": "application/json, text/plain, text/html;q=0.9, */*;q=0.8" }
+          });
+          if (!response.ok) {
+            throw new Error(`${response.status} ${response.statusText}`);
+          }
+          return await response.text();
+        } catch (error) {
+          lastError = error;
+        }
+      }
+
+      throw lastError || new Error("Source is unreachable");
+    }
+
+    async function fetchJson(url, fallbackUrls = []) {
+      const text = await fetchText(url, fallbackUrls);
+      return JSON.parse(text);
+    }
+
+    function escapeHtml(value) {
+      return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function linkify(value) {
+      return value.replace(/(https?:\/\/[^\s)]+)/g, '<a href="$1" target="_blank" rel="noreferrer">$1</a>');
+    }
+
+    function inlineMarkdown(value) {
+      let text = escapeHtml(value);
+      text = text.replace(/`([^`]+)`/g, "<code>$1</code>");
+      text = text.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+      text = text.replace(/\[([^\]]+)]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>');
+      return linkify(text);
+    }
+
+    function trimReleaseMarkdown(markdown) {
+      const lines = String(markdown || "").replace(/\r/g, "").split("\n");
+      const stopIndex = lines.findIndex((line) => {
+        const normalized = line.trim().toLowerCase();
+        return normalized.includes("full changelog:") || normalized === "## changelog" || normalized === "# changelog";
+      });
+
+      return (stopIndex === -1 ? lines : lines.slice(0, stopIndex)).join("\n").trim();
+    }
+
+    function markdownToHtml(markdown) {
+      const lines = trimReleaseMarkdown(markdown).split("\n");
+      const html = [];
+      let inList = false;
+      let paragraph = [];
+
+      function flushParagraph() {
+        if (paragraph.length) {
+          html.push(`<p>${inlineMarkdown(paragraph.join(" "))}</p>`);
+          paragraph = [];
+        }
+      }
+
+      function closeList() {
+        if (inList) {
+          html.push("</ul>");
+          inList = false;
+        }
+      }
+
+      for (const rawLine of lines) {
+        const line = rawLine.trim();
+        if (!line) {
+          flushParagraph();
+          closeList();
+          continue;
+        }
+
+        const heading = line.match(/^#{1,5}\s+(.+)$/);
+        if (heading) {
+          flushParagraph();
+          closeList();
+          html.push(`<h4>${inlineMarkdown(heading[1])}</h4>`);
+          continue;
+        }
+
+        const bullet = line.match(/^[-*]\s+(.+)$/);
+        if (bullet) {
+          flushParagraph();
+          if (!inList) {
+            html.push("<ul>");
+            inList = true;
+          }
+          html.push(`<li>${inlineMarkdown(bullet[1])}</li>`);
+          continue;
+        }
+
+        paragraph.push(line);
+      }
+
+      flushParagraph();
+      closeList();
+      return html.join("") || '<p class="empty">No notes were published for this release.</p>';
+    }
+
+    function getPlainTextFromHtml(html) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
+      doc.querySelectorAll("script, style, nav, footer").forEach((node) => node.remove());
+      return doc.body.textContent.replace(/\u00a0/g, " ").replace(/[ \t]+\n/g, "\n");
+    }
+
+    function parseClaudeChangelog(text) {
+      const plain = text.trim().startsWith("<") ? getPlainTextFromHtml(text) : text;
+      const lines = plain.replace(/\r/g, "").split("\n").map((line) => line.trim()).filter(Boolean);
+      const versionIndex = lines.findIndex((line) => /^(\d+\.){2}\d+/.test(line) || /^v?(\d+\.){2}\d+/.test(line));
+
+      if (versionIndex === -1) {
+        throw new Error("Claude changelog format was not recognized");
+      }
+
+      const version = lines[versionIndex].replace(/^v/i, "");
+      const publishedAt = lines[versionIndex + 1] && /^[A-Z][a-z]+ \d{1,2}, \d{4}$/.test(lines[versionIndex + 1])
+        ? lines[versionIndex + 1]
+        : "";
+      const stopIndex = lines.findIndex((line, index) => index > versionIndex + 1 && /^v?(\d+\.){2}\d+/.test(line));
+      const bodyLines = lines
+        .slice(versionIndex + (publishedAt ? 2 : 1), stopIndex === -1 ? undefined : stopIndex)
+        .filter((line) => !["Added", "Changed", "Fixed"].includes(line))
+        .map((line) => line.replace(/^\*\s+/, ""));
+
+      return {
+        version,
+        publishedAt: publishedAt ? dateOnlyFormatter.format(new Date(`${publishedAt} 12:00:00`)) : "",
+        html: bodyLines.length
+          ? `<ul>${bodyLines.map((line) => `<li>${inlineMarkdown(line)}</li>`).join("")}</ul>`
+          : '<p class="empty">No text notes were found for the latest version.</p>'
+      };
+    }
+
+    function renderCard(source, release) {
+      const card = cards.get(source.id);
+      card.querySelector(".version").textContent = release.version || "Version not detected";
+      card.querySelector(".date").textContent = release.publishedAt
+        ? `Released: ${release.publishedAt}`
+        : "Release date not provided by the source";
+      card.querySelector(".release-html").className = "release-html";
+      card.querySelector(".release-html").innerHTML = release.html;
+      card.querySelector(".release-html").scrollTop = 0;
+    }
+
+    function renderError(source, error) {
+      const card = cards.get(source.id);
+      card.querySelector(".version").textContent = "Error";
+      card.querySelector(".date").textContent = "Could not read this source";
+      card.querySelector(".release-html").className = "release-html error";
+      card.querySelector(".release-html").textContent = error.message || "Unknown error";
+    }
+
+    async function loadSource(source) {
+      if (source.type === "githubRelease") {
+        const data = await fetchJson(source.apiUrl, source.fallbackUrls);
+        return {
+          version: data.name || data.tag_name,
+          publishedAt: data.published_at ? formatter.format(new Date(data.published_at)) : "",
+          html: markdownToHtml(data.body || "")
+        };
+      }
+
+      const text = await fetchText(source.apiUrl, source.fallbackUrls);
+      return parseClaudeChangelog(text);
+    }
+
+    async function refresh() {
+      refreshButton.disabled = true;
+      statusText.textContent = "Refreshing...";
+
+      const results = await Promise.allSettled(sources.map(async (source) => {
+        const release = await loadSource(source);
+        renderCard(source, release);
+        return source.id;
+      }));
+
+      sources.forEach((source, index) => {
+        if (results[index].status === "rejected") {
+          renderError(source, results[index].reason);
+        }
+      });
+
+      const ok = results.filter((result) => result.status === "fulfilled").length;
+      statusText.textContent = `Updated ${ok}/${sources.length} sources at ${formatter.format(new Date())}.`;
+      refreshButton.disabled = false;
+    }
+
+    initCards();
+    refreshButton.addEventListener("click", refresh);
+    refresh();
+  </script>
+</body>
+</html>
